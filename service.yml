@@ -7,11 +7,11 @@ services:
       - "5173:5173"
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 3
   backend:
     image: karan060/backend:latest
     ports:
       - "3001:3001"
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 2
