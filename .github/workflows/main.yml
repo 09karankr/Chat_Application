@@ -1,0 +1,24 @@
+name: "Build CHAT APP"
+
+on:
+    push: 
+        branches: 
+         - "master"
+    pull_request: 
+
+jobs:
+    build:
+        name: "building docker image"
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3 
+            - name: "build image"
+              run: |
+                docker build -t fontend:latest -f frontend.Dockerfile .
+                docker build -t backend:latest -f backend.Dockerfile .
+            - name: push
+              if: github.ref == 'refs/heads/master' 
+              run: |
+                echo "${{ secrets.DOCKER_HUB_PASS }}" | docker login -u "karan060" --password-stdin
+                docker push karan060/frontend:latest
+                docker push karan060/backend:latest
