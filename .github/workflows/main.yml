@@ -14,8 +14,8 @@ jobs:
             - uses: actions/checkout@v3 
             - name: "build image"
               run: |
-                docker build -t fontend:latest -f frontend.Dockerfile .
-                docker build -t backend:latest -f backend.Dockerfile .
+                docker build -t karan060/fontend:latest -f frontend.Dockerfile .
+                docker build -t karan060/backend:latest -f backend.Dockerfile .
             - name: push
               if: github.ref == 'refs/heads/master' 
               run: |
