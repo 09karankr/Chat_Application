@@ -48,6 +48,7 @@ jobs:
                 docker push karan060/backend:${{ steps.vars.outputs.sha_short }}
 
             - name: replace service file for meltcd
+              if: github.ref == 'refs/heads/master' 
               uses: dmnemec/copy_file_to_another_repo_action@main
               env:
                 API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
