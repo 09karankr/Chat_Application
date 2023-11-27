@@ -12,6 +12,13 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3 
+
+            - name: Set outputs
+              id: vars
+              run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+            - name: Check outputs
+              run: echo ${{ steps.vars.outputs.sha_short }}
             
             - name: find and replace backend url in frontend
               uses: jacobtomlinson/gha-find-replace@v3
@@ -21,13 +28,34 @@ jobs:
                 include: "frontend/src/**"
                 regex: true
 
+            - name: find and replace docker image version
+              uses: jacobtomlinson/gha-find-replace@v3
+              with: 
+                find: "latest"
+                replace: "${{ steps.vars.outputs.sha_short }}"
+                include: "service.yml"
+                regex: true
+
             - name: "build image"
               run: |
-                docker build -t karan060/frontend:latest -f frontend.Dockerfile .
-                docker build -t karan060/backend:latest -f backend.Dockerfile .
+                docker build -t karan060/frontend:${{ steps.vars.outputs.sha_short }} -f frontend.Dockerfile .
+                docker build -t karan060/backend:${{ steps.vars.outputs.sha_short }} -f backend.Dockerfile .
             - name: push
               if: github.ref == 'refs/heads/master' 
               run: |
                 echo "${{ secrets.DOCKER_HUB_PASS }}" | docker login -u "karan060" --password-stdin
-                docker push karan060/frontend:latest
-                docker push karan060/backend:latest
+                docker push karan060/frontend:${{ steps.vars.outputs.sha_short }}
+                docker push karan060/backend:${{ steps.vars.outputs.sha_short }}
+
+            - name: replace service file for meltcd
+              uses: dmnemec/copy_file_to_another_repo_action@main
+              env:
+                API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
+                BUILD_VERSION: ${{ steps.vars.outputs.sha_short }}
+              with:
+                source_file: 'service.yml'
+                destination_repo: '09karankr/Chat_Application'
+                destination_branch: 'master'
+                user_email: 'kunalsin9h@gmail.com'
+                user_name: 'kunalsin9h'
+                commit_message: 'Update docker image version for MeltCD'
