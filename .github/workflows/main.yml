@@ -12,6 +12,15 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3 
+            
+            - name: find and replace backend url in frontend
+              uses: jacobtomlinson/gha-find-replace@v3
+              with: 
+                find: "http://localhost:3001"
+                replace: "https://back.karan.meltred.tech"
+                include: "frontend/src/**"
+                regex: true
+
             - name: "build image"
               run: |
                 docker build -t karan060/frontend:latest -f frontend.Dockerfile .
