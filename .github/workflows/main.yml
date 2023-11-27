@@ -56,6 +56,6 @@ jobs:
                 source_file: 'service.yml'
                 destination_repo: '09karankr/Chat_Application'
                 destination_branch: 'master'
-                user_email: 'kunalsin9h@gmail.com'
-                user_name: 'kunalsin9h'
+                user_email: 'officialkaran39@gmail.com'
+                user_name: '09karankr'
                 commit_message: 'Update docker image version for MeltCD'
